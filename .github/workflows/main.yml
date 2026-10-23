@@ -8,24 +8,19 @@ on:
 
 jobs:
   build-and-test:
-    # ГЛАВНАЯ СТРОКА: используем наш self-hosted раннер!
     runs-on: self-hosted
     
     steps:
     - name: 📥 Checkout кода
       uses: actions/checkout@v4
 
-#    - name: 🐍 Установка Python
-#      uses: actions/setup-python@v5
-#      with:
-#        python-version: '3.11'
-
-    - name:  Установка зависимостей
+    - name: 📦 Установка pip и зависимостей
       run: |
+        python -m ensurepip --upgrade
         python -m pip install --upgrade pip
-        pip install fastapi==0.95.2 uvicorn==0.22.0 pydantic==1.10.13 pytest==7.4.3 httpx==0.24.1
+        python -m pip install fastapi==0.95.2 uvicorn==0.22.0 pydantic==1.10.13 pytest==7.4.3 httpx==0.24.1
 
-    - name: 🧪 Запуск тестов (Pytest)
+    - name:  Запуск тестов (Pytest)
       run: |
         python -m pytest test_main.py -v --tb=short
         echo "✅ Все тесты пройдены! Голубь Геннадий одобряет."
