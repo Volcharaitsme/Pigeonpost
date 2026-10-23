@@ -15,10 +15,10 @@ jobs:
     - name: 📥 Checkout кода
       uses: actions/checkout@v4
 
-    - name: 🐍 Установка Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
+#    - name: 🐍 Установка Python
+#      uses: actions/setup-python@v5
+#      with:
+#        python-version: '3.11'
 
     - name:  Установка зависимостей
       run: |
