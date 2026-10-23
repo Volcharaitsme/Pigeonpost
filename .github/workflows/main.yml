@@ -11,30 +11,34 @@ jobs:
     runs-on: self-hosted
     
     steps:
-    - name: 📥 Checkout кода
+    - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: 📦 Установка pip и зависимостей
+    - name: Install dependencies
       run: |
         python -m ensurepip --upgrade
         python -m pip install --upgrade pip
         python -m pip install fastapi==0.95.2 uvicorn==0.22.0 pydantic==1.10.13 pytest==7.4.3 httpx==0.24.1
 
-    - name:  Запуск тестов (Pytest)
+    - name: Run Pytest
       run: |
         python -m pytest test_main.py -v --tb=short
-        echo "✅ Все тесты пройдены! Голубь Геннадий одобряет."
 
-    - name: 🚀 Проверка запуска приложения
+    - name: Start application and verify
       run: |
-        echo "🐦 Запускаем PigeonPost в фоне..."
-        Start-Process python -ArgumentList "-m", "uvicorn", "main:app", "--port", "8000"
+        Write-Host 'Starting PigeonPost application...'
+        Start-Process -FilePath 'python' -ArgumentList '-m', 'uvicorn', 'main:app', '--port', '8000'
         Start-Sleep -Seconds 5
-        $response = Invoke-RestMethod -Uri "http://localhost:8000/"
-        Write-Host "Ответ сервера: $($response.message)"
-        if ($response.message -match "PigeonPost") {
-            Write-Host "✅ Приложение успешно запущено и отвечает!"
-        } else {
-            Write-Host "❌ Ошибка: приложение не отвечает"
+        try {
+            $response = Invoke-RestMethod -Uri 'http://localhost:8000/'
+            Write-Host "Server response: $($response.message)"
+            if ($response.message -like '*PigeonPost*') {
+                Write-Host 'SUCCESS: Application is running and responding!'
+            } else {
+                Write-Host 'ERROR: Application response does not contain expected text'
+                exit 1
+            }
+        } catch {
+            Write-Host "ERROR: Failed to connect to application: $_"
             exit 1
         }
